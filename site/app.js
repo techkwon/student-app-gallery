@@ -152,7 +152,7 @@ function resizeCanvas(){
   points=Array.from({length:innerWidth<600?16:32},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.3+.4,s:Math.random()*.15+.05}));
   drawParticles();
 }
-function drawParticles(){ if(!ctx)return;ctx.clearRect(0,0,w,h);ctx.fillStyle='#cbfa78';for(const p of points){ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();}}
+function drawParticles(){ if(!ctx)return;ctx.clearRect(0,0,w,h);ctx.fillStyle='#a8ead8';for(const p of points){ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();}}
 function loop(time){frame=0;if(paused||!visible||document.hidden||!ctx)return;if(time-lastTime>32){for(const p of points){p.y-=p.s;if(p.y<0)p.y=h;}drawParticles();lastTime=time;}frame=requestAnimationFrame(loop);}
 function scheduleParticles(){if(frame)cancelAnimationFrame(frame);frame=0;if(!paused&&visible&&!document.hidden&&ctx)frame=requestAnimationFrame(loop);}
 new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;scheduleParticles();}).observe(hero);

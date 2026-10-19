@@ -18,7 +18,7 @@ const browser=await chromium.launch({headless:true,executablePath:process.env.BR
 const errors=[]; const report=[];
 for(const width of [360,390,768,1440]){
  const context=await browser.newContext({viewport:{width,height:900},isMobile:width<600,hasTouch:width<600});
- const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
+ const page=await context.newPage();if(width===360){const session=await context.newCDPSession(page);await session.send('Emulation.setCPUThrottlingRate',{rate:6});}page.on('pageerror',e=>errors.push(e.message));
  await page.goto(base);await page.waitForSelector('.work-card');
  assert.equal(await page.locator('.work-card').count(),27);
  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`overflow at ${width}`);
@@ -26,7 +26,7 @@ for(const width of [360,390,768,1440]){
  await page.locator('[data-category="환경과 자원"]').click();assert.equal(await page.locator('.work-card').count(),4);
  await page.locator('#search').fill('재활용');assert.equal(await page.locator('.work-card').count(),1);
  const card=page.locator('.work-card').first();await card.scrollIntoViewIfNeeded();await page.waitForTimeout(400);
- const before=await page.evaluate(()=>scrollY);await card.click();assert(await page.locator('dialog').evaluate(el=>el.open));
+ const before=await page.evaluate(()=>scrollY);if(width<600)await card.tap();else await card.click();assert(await page.locator('dialog').evaluate(el=>el.open));
  assert.equal(await page.locator('dialog a[target]').count(),1);assert.equal(await page.locator('dialog a[target]').getAttribute('rel'),'noopener noreferrer');
  for(let i=0;i<5;i++)await page.keyboard.press('Tab');
  assert(await page.evaluate(()=>!!document.activeElement.closest('dialog')));
