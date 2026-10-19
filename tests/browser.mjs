@@ -23,8 +23,8 @@ for(const width of [360,390,768,1440]){
  assert.equal(await page.locator('.work-card').count(),27);
  await page.waitForSelector('.main-screen img');
  assert.equal(await page.locator('.orbit-preview img').count(),3);
- assert.equal(await page.locator('#works .has-screenshot img').count(),24);
- assert.equal(await page.locator('#works .no-screenshot').count(),3);
+ assert.equal(await page.locator('#works .has-screenshot img').count(),27);
+ assert.equal(await page.locator('#works .no-screenshot').count(),0);
  const mainScreen=page.locator('.main-screen');await mainScreen.focus();
  assert(await page.locator('.hero-showcase').evaluate(el=>el.classList.contains('rotation-paused')));
  const heroTitle=await page.locator('.spotlight-story h2').innerText();await page.keyboard.press('Enter');assert.equal(await page.locator('#dialog-title').innerText(),heroTitle);
@@ -92,4 +92,4 @@ assert(new Set(frames.map(frame=>frame.transform)).size>1,'Independent frame mot
 assert(new Set(frames.map(frame=>frame.scene)).size>1,'Pointer parallax');
 const video=motionPage.video();await motionContext.close();await rename(await video.path(),'test-results/motion-proof.webm');
 await writeFile('test-results/motion-report.json',JSON.stringify(frames,null,2));
-console.log(JSON.stringify({viewports:report,actualScreenshots:24,unavailableImages:3,motionVideo:'test-results/motion-proof.webm',motionFrames:frames.length,basePath:true,custom404:true,noJsContent:true,consoleErrors:errors},null,2));await browser.close();server.close();
+console.log(JSON.stringify({viewports:report,actualScreenshots:27,unavailableImages:0,motionVideo:'test-results/motion-proof.webm',motionFrames:frames.length,basePath:true,custom404:true,noJsContent:true,consoleErrors:errors},null,2));await browser.close();server.close();

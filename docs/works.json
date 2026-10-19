@@ -239,7 +239,11 @@
     "overallRank": null,
     "overallRankLabel": null,
     "problem": "낯선 음식 이름과 작은 글씨는 햄버거 메뉴를 고르기 어렵게 만들어요.",
-    "solution": "큰 글씨와 쉬운 메뉴 표현을 선택하고 고른 음식의 수량과 합계를 확인해요."
+    "solution": "큰 글씨와 쉬운 메뉴 표현을 선택하고 고른 음식의 수량과 합계를 확인해요.",
+    "image": "./assets/project-13.webp",
+    "thumbnail": "./assets/project-13-thumb.webp",
+    "imageAlt": "쉬운 햄버거 주문 실제 앱 초기 화면",
+    "imageReviewed": true
   },
   {
     "id": "project-14",
@@ -386,7 +390,11 @@
     "overallRank": null,
     "overallRankLabel": null,
     "problem": "정해진 시간 안에 갈 수 있는 주변 장소를 찾기 어려워요.",
-    "solution": "출발지와 이동 가능한 시간을 기준으로 등록된 장소를 찾아봐요."
+    "solution": "출발지와 이동 가능한 시간을 기준으로 등록된 장소를 찾아봐요.",
+    "image": "./assets/project-21.webp",
+    "thumbnail": "./assets/project-21-thumb.webp",
+    "imageAlt": "청소년 안심 장소 찾기 실제 앱 초기 화면",
+    "imageReviewed": true
   },
   {
     "id": "project-22",
@@ -400,7 +408,11 @@
     "overallRank": null,
     "overallRankLabel": null,
     "problem": "키오스크에서 원하는 메뉴가 어느 버튼 안에 있는지 헷갈려요.",
-    "solution": "메뉴 이름을 입력하면 그 메뉴까지 누를 버튼 순서를 안내해요."
+    "solution": "메뉴 이름을 입력하면 그 메뉴까지 누를 버튼 순서를 안내해요.",
+    "image": "./assets/project-22.webp",
+    "thumbnail": "./assets/project-22-thumb.webp",
+    "imageAlt": "키오스크 길찾기 도우미 실제 앱 초기 화면",
+    "imageReviewed": true
   },
   {
     "id": "project-23",
