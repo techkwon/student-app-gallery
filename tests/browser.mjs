@@ -21,6 +21,37 @@ for(const width of [360,390,768,1440]){
  const page=await context.newPage();if(width===360){const session=await context.newCDPSession(page);await session.send('Emulation.setCPUThrottlingRate',{rate:6});}page.on('pageerror',e=>errors.push(e.message));
  await page.goto(base);await page.waitForSelector('.work-card');
  assert.equal(await page.locator('.work-card').count(),27);
+ assert.equal(await page.locator('.hero-tile').count(),6);
+ assert.equal(await page.locator('.hero-tile:visible').count(),width<600?4:6);
+ const heroTile=page.locator('.hero-tile').first();await heroTile.focus();
+ assert(await page.locator('.hero-showcase').evaluate(el=>el.classList.contains('is-paused')));
+ const heroTitle=await heroTile.locator('strong').innerText();await page.keyboard.press('Enter');assert.equal(await page.locator('#dialog-title').innerText(),heroTitle);
+ await page.keyboard.press('Escape');await page.waitForFunction(()=>document.body.style.position==='');
+ await page.locator('#motion').click();assert.equal(await page.locator('.hero-tile').first().evaluate(el=>getComputedStyle(el).animationName),'none');
+ await page.locator('#motion').click();
+ if(width===390){
+   const initial=await page.locator('.hero-tile').evaluateAll(tiles=>tiles.map(tile=>tile.dataset.workId).join(','));
+   await page.waitForFunction(before=>[...document.querySelectorAll('.hero-tile')].map(tile=>tile.dataset.workId).join(',')!==before,initial,{timeout:7000});
+   await page.locator('#motion').click();
+   const stopped=await page.locator('.hero-tile').evaluateAll(tiles=>tiles.map(tile=>tile.dataset.workId).join(','));
+   await page.waitForTimeout(3800);
+   assert.equal(await page.locator('.hero-tile').evaluateAll(tiles=>tiles.map(tile=>tile.dataset.workId).join(',')),stopped);
+   await page.locator('#motion').click();
+ }
+ assert.equal(await page.locator('.top-selections > li').count(),10);
+ assert.deepEqual(await page.locator('.top-selections > li').evaluateAll(items=>items.map(item=>Number(item.getAttribute('value')))),[1,2,2,4,5,6,7,8,9,9]);
+ assert.equal(await page.locator('.top-selections .tie-label').count(),4);
+ assert.deepEqual(await page.locator('.top-selections [data-work-id]').evaluateAll(items=>items.map(item=>item.dataset.workId)),Array.from({length:10},(_,i)=>`project-${String(i+1).padStart(2,'0')}`));
+ assert.equal(await page.locator('.class-group').count(),9);
+ await page.locator('#selections').scrollIntoViewIfNeeded();await page.waitForTimeout(400);await page.screenshot({path:`test-results/selections-${width}.png`});
+ const ranked=page.locator('.top-selections [data-work-id="project-02"]');await ranked.click();
+ assert((await page.locator('#dialog-content').innerText()).includes('전체 공동 2위 · 7반 1위'));
+ await page.keyboard.press('Escape');await page.waitForFunction(()=>document.body.style.position==='');assert(await ranked.evaluate(el=>el===document.activeElement));
+ await page.locator('#class-filter').selectOption('7반');assert.equal(await page.locator('.class-group:visible').count(),1);
+ assert.deepEqual(await page.locator('.class-group:visible [data-work-id]').evaluateAll(items=>items.map(item=>item.dataset.workId)),['project-02','project-04','project-24']);
+ await page.locator('#class-filter').selectOption('all');assert.equal(await page.locator('.class-group:visible').count(),9);
+ await page.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));
+
  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`overflow at ${width}`);
  await page.waitForTimeout(1000);await page.screenshot({path:`test-results/gallery-${width}.png`});
  await page.locator('[data-category="환경과 자원"]').click();assert.equal(await page.locator('.work-card').count(),4);
@@ -38,12 +69,12 @@ for(const width of [360,390,768,1440]){
  await page.emulateMedia({reducedMotion:'reduce'});await page.waitForFunction(()=>document.documentElement.classList.contains('motion-off'));assert(await page.locator('html').evaluate(el=>el.classList.contains('motion-off')));
  assert.equal(await page.locator('.hero-image').evaluate(el=>getComputedStyle(el).animationName),'none');
  await page.locator('#gallery').scrollIntoViewIfNeeded();await page.waitForTimeout(1000);await page.screenshot({path:`test-results/gallery-collection-${width}.png`});
- report.push({width,works:27,filterSearch:true,modalKeyboard:true,scrollFocusRestore:true,reducedMotion:true,overflow:false});
+ report.push({width,works:27,heroGallery:true,sharedRanks:true,classSelections:true,filterSearch:true,modalKeyboard:true,scrollFocusRestore:true,reducedMotion:true,overflow:false});
  await context.close();
 }
 assert.equal(errors.length,0,JSON.stringify(errors));
 const context=await browser.newContext({javaScriptEnabled:false});
-const page=await context.newPage();await page.goto(base);assert.equal(await page.locator('.static-works article').count(),27);
+const page=await context.newPage();await page.goto(base);assert.equal(await page.locator('.static-works article').count(),27);assert.equal(await page.locator('.top-selections > li').count(),10);assert.equal(await page.locator('.class-group').count(),9);
 const missing=await page.goto(base+'missing/nested-page');assert.equal(missing.status(),404);assert.equal(await page.locator('a').getAttribute('href'),'https://techkwon.github.io/student-app-gallery/');
 await context.close();
 console.log(JSON.stringify({viewports:report,basePath:true,custom404:true,noJsContent:true,consoleErrors:errors},null,2));await browser.close();server.close();

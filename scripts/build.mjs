@@ -1,4 +1,5 @@
 import {cp,mkdir,readFile,writeFile,rm} from 'node:fs/promises';
+import {renderSelections,selectionData} from './selections.mjs';
 import {validateWorks} from './validate.mjs';
 const url=process.env.SITE_URL || 'https://techkwon.github.io/student-app-gallery/';
 if(!/^https:\/\/[a-z\d.-]+\/[a-z\d/_-]*\/$/i.test(url)) throw new Error('SITE_URL must be an HTTPS directory URL with trailing slash');
@@ -6,6 +7,7 @@ const works=JSON.parse(await readFile('site/works.json','utf8')); validateWorks(
 await rm('docs',{recursive:true,force:true}); await mkdir('docs',{recursive:true}); await cp('site','docs',{recursive:true});
 let html=(await readFile('site/index.html','utf8')).replaceAll('__SITE_URL__',url);
 const escape = text => text.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('\"','&quot;');
+html=html.replace('<!--SELECTIONS-->',renderSelections(selectionData(works),works,escape));
 const fallback = '<noscript><style>.gallery-tools,#result-status,#empty{display:none!important}</style><div class="static-works">'+[...works].sort((a,b)=>a.category.localeCompare(b.category,'ko')||a.title.localeCompare(b.title,'ko')).map(w=>`<article><p>${escape(w.category)}</p><h3>${escape(w.title)}</h3><p>${escape(w.description)}</p><p>${escape(w.notice)}</p></article>`).join('')+'</div></noscript>';
 html=html.replace('</noscript></section>', '</noscript>'+fallback+'</section>');
 await writeFile('docs/index.html',html);

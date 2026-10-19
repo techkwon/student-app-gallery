@@ -1,6 +1,6 @@
 export function validateWorks(works){
  if(!Array.isArray(works))throw new Error('Works must be an array');
- const allowed=new Set(['id','title','category','description','notice','liveUrl','linkReviewed','image','imageAlt']);const ids=new Set();
+ const allowed=new Set(['id','title','category','description','notice','liveUrl','linkReviewed','image','imageAlt','classLabel','classRank','overallRank','overallRankLabel']);const ids=new Set();
  for(const w of works){
   for(const k of Object.keys(w))if(!allowed.has(k))throw new Error(`Forbidden public field: ${k}`);
   if(!/^project-\d{2}$/.test(w.id)||ids.has(w.id))throw new Error('Invalid/duplicate anonymous id');ids.add(w.id);

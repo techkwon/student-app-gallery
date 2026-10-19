@@ -6,3 +6,11 @@ for(const meta of ['canonical','og:image','twitter:card','application/ld+json'])
 assert.throws(()=>validateWorks([{...data[0],studentName:'blocked'}]));
 assert.throws(()=>validateWorks([{...data[0],liveUrl:'https://example.com',linkReviewed:false}]));
 console.log(`Static checks passed: ${data.length} works, privacy field allowlist, unreviewed link rejection, SEO and deploy assets.`);
+
+const {validateSelections,selectionData}=await import('./selections.mjs');
+const selections=selectionData(data);validateSelections(selections,data);
+assert.deepEqual(selections.overall.map(w=>w.rank),[1,2,2,4,5,6,7,8,9,9]);
+assert.equal(selections.classes.length,9);
+const bad=structuredClone(selections);bad.overall[1].rankLabel='2위';assert.throws(()=>validateSelections(bad,data));
+assert.throws(()=>validateWorks([{...data[0],score:99}]));
+console.log('Selection checks passed: exact shared ranks, nine classes, score fields rejected.');

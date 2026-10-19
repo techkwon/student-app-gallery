@@ -17,6 +17,7 @@ function syncMotion() {
   $('span', motionButton).textContent = paused ? 'OFF' : 'ON';
   if (preference.matches) motionButton.setAttribute('aria-label', '기기 설정에 따라 움직임 줄이기 적용 중');
   scheduleParticles();
+  scheduleHeroGallery();
 }
 motionButton.addEventListener('click', () => { manualPause = !manualPause; syncMotion(); });
 preference.addEventListener('change', syncMotion);
@@ -38,6 +39,7 @@ function openDialog(content, trigger) {
   document.body.style.top = `-${savedScroll}px`;
   document.body.style.width = '100%';
   dialog.showModal(); dialog.scrollTop = 0;
+  scheduleHeroGallery();
   $('.close', dialog).focus();
 }
 function closeDialog() { dialog.close(); }
@@ -65,17 +67,30 @@ document.querySelectorAll('[data-open-about]').forEach(button => button.addEvent
     element('p','EXHIBITION NOTES','eyebrow'), heading,
     element('p','학생들의 앱 아이디어와 시도를 소개하는 큐레이션 전시입니다. 실제 공모전이나 수상 결과를 안내하는 공간이 아닙니다.'),
     element('h3','수행평가와 분리된 전시'),
-    element('p','앱 완성도와 동작 여부는 수행평가 항목이 아니었습니다. 평가는 설계서의 글, 문제의 근거, 아이디어 비교, 과정 기록을 바탕으로 이루어졌습니다. 전시 여부나 배열은 점수·성적·등수를 의미하지 않습니다.'),
+    element('p','앱 완성도와 동작 여부는 수행평가 항목이 아니었습니다. 평가는 설계서의 글, 문제의 근거, 아이디어 비교, 과정 기록을 바탕으로 이루어졌습니다. 전체 TOP10과 반별 우수작 순위는 수행평가 성적이 아닌 작품 전시 선정 순위입니다. 점수는 공개하지 않습니다.'),
     element('h3','학생의 이름 대신 작품의 생각'),
-    element('p','이름·반·번호·학생 계정·사진을 공개하지 않습니다. 작품 제목과 설명도 익명으로 정리했습니다. 앱 내부의 식별정보까지 확인한 링크만 제공합니다.'),
+    element('p','반별 우수작에는 반만 표시하며, 학생 이름·학번·번호·계정·사진은 공개하지 않습니다. 작품 제목과 설명도 익명으로 정리했습니다. 앱 내부의 식별정보까지 확인한 링크만 제공합니다.'),
     element('h3','체험 전에 알아 두세요'),
     element('p','교육 과정에서 만든 프로토타입입니다. 각 작품의 제한 안내를 확인해 주세요. 체험 링크가 없는 작품은 소개만 제공하며, 기능이 작동한다고 보장하지 않습니다. 그래픽은 별도 표시가 없는 한 실제 앱 화면이 아닌 아이디어 일러스트입니다.')
   ], button);
 }));
+document.addEventListener('click', event => {
+  const link=event.target.closest('[data-work-id]');
+  if(!link) return;
+  const work=works.find(item=>item.id===link.dataset.workId);
+  if(work){event.preventDefault();showWork(work,link);}
+});
+$('#class-filter')?.addEventListener('change', event => {
+  const value=event.target.value;
+  document.querySelectorAll('.class-group').forEach(group=>group.hidden=value!=='all'&&group.dataset.class!==value);
+  $('#class-status').textContent=value==='all'?`${document.querySelectorAll('.class-group').length}개 반의 우수작`:`${value} 전시 선정 1~3위`;
+});
 const symbols = {'생활 접근성':'⌘','이동과 안전':'↗','환경과 자원':'♧','우리 동네':'⌂','소통과 안내':'✳'};
 function showWork(work, trigger) {
   const title = element('h2', work.title); title.id = 'dialog-title';
   const nodes = [element('p',work.category,'eyebrow'),title,element('p',work.description),element('h3','체험 안내'),element('p',work.notice)];
+  const selection = `${work.overallRankLabel ? `전체 ${work.overallRankLabel} · ` : ''}${work.classLabel} ${work.classRank}위`;
+  nodes.splice(2,0,element('p',`${selection} — 수행평가 성적이 아닌 작품 전시 선정 순위입니다.`,'assessment-note'));
   if (work.image) { const img=element('img'); img.src=work.image; img.alt=work.imageAlt || `${work.title} 아이디어 일러스트`; img.width=800; img.height=600; nodes.splice(2,0,img); }
   if (work.liveUrl) {
     const link=element('a','앱 체험하기 ↗','primary-link'); link.href=work.liveUrl; link.target='_blank'; link.rel='noopener noreferrer'; nodes.push(link,element('p','외부 사이트가 새 탭에서 열립니다. 개인정보를 입력하거나 실제 결제를 진행하지 마세요.'));
@@ -105,7 +120,7 @@ function render() {
   }
   $('#empty').hidden = filtered.length > 0;
   if (works.length) {
-    $('#result-status').textContent = `${works.length}개의 발견 중 ${filtered.length}개 · 작품 배열은 성적 순위와 무관합니다.`;
+    $('#result-status').textContent = `${works.length}개의 발견 중 ${filtered.length}개 · 수행평가 성적과 무관한 작품 전시입니다.`;
     $('#empty h3').textContent='아직 맞는 발견을 찾지 못했어요.';
     $('#empty p:not(.eyebrow)').textContent='검색어를 바꾸거나 다른 주제를 선택해 보세요.';
   }
@@ -121,6 +136,7 @@ async function loadWorks() {
       const button=element('button',name,'filter'); button.dataset.category=name; button.setAttribute('aria-pressed','false'); $('#filters').append(button);
     });
     render();
+    renderHeroGallery();
   } catch {
     $('#result-status').textContent='작품 목록을 불러오지 못했습니다. 잠시 후 새로고침해 주세요.';
     $('#empty h3').textContent='전시 연결을 다시 확인하고 있어요.';
@@ -132,6 +148,53 @@ $('#filters').addEventListener('click',event=> {
   $('#filters').querySelectorAll('button').forEach(el=> {el.classList.toggle('active',el===button);el.setAttribute('aria-pressed',String(el===button));}); render();
 });
 $('#search').addEventListener('input', render);
+let heroTimer=0, heroSwapTimer=0, heroTransition=null, heroGalleryVisible=true, heroHovered=false;
+const showcase=$('.hero-showcase');
+const shuffled = values => {
+  const result=[...values];
+  for(let i=result.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[result[i],result[j]]=[result[j],result[i]];}
+  return result;
+};
+function fillHeroTile(tile, work){
+  tile.dataset.workId=work.id;
+  tile.setAttribute('aria-label',`${work.title} 자세히 보기`);
+  const symbol=element('span',symbols[work.category] || '✳','hero-tile-symbol');symbol.setAttribute('aria-hidden','true');
+  tile.replaceChildren(element('span',work.category,'hero-tile-category'),symbol,element('strong',work.title),element('span','개념 일러스트 · 작품 보기 ↗','hero-tile-caption'));
+}
+function renderHeroGallery(){
+  showcase.replaceChildren();
+  shuffled(works).slice(0,6).forEach((work,i)=>{
+    const tile=element('button',null,`hero-tile tile-${i}`);tile.type='button';
+    fillHeroTile(tile,work);showcase.append(tile);
+  });
+  scheduleHeroGallery();
+}
+function scheduleHeroGallery(){
+  clearTimeout(heroTimer);
+  const stopped=paused||!heroGalleryVisible||document.hidden||heroHovered||showcase.contains(document.activeElement)||dialog.open;
+  showcase.classList.toggle('is-paused',stopped);
+  if(stopped){clearTimeout(heroSwapTimer);heroTransition?.cancel();heroTransition=null;}
+  if(stopped || !showcase.children.length) return;
+  heroTimer=setTimeout(()=>{
+    const tiles=[...showcase.children].filter(tile=>getComputedStyle(tile).display!=='none');
+    const present=new Set([...showcase.children].map(tile=>tile.dataset.workId));
+    const next=shuffled(works.filter(work=>!present.has(work.id)))[0];
+    const tile=tiles[Math.floor(Math.random()*tiles.length)];
+    if(next&&tile){
+      const transition=heroTransition=tile.animate([{opacity:1,filter:'blur(0px)'},{opacity:0,filter:'blur(3px)'},{opacity:1,filter:'blur(0px)'}],{duration:700});
+      heroSwapTimer=setTimeout(()=>{if(!paused&&!showcase.contains(document.activeElement)&&!heroHovered&&!dialog.open)fillHeroTile(tile,next);},330);
+      transition.onfinish=()=>tile.style.opacity='';
+    }
+    scheduleHeroGallery();
+  },3200);
+}
+showcase.addEventListener('pointerenter',event=>{if(event.pointerType==='mouse'){heroHovered=true;scheduleHeroGallery();}});
+showcase.addEventListener('pointerleave',()=>{heroHovered=false;scheduleHeroGallery();});
+showcase.addEventListener('focusin',scheduleHeroGallery);
+showcase.addEventListener('focusout',()=>requestAnimationFrame(scheduleHeroGallery));
+dialog.addEventListener('close',scheduleHeroGallery);
+document.addEventListener('visibilitychange',scheduleHeroGallery);
+new IntersectionObserver(entries=>{heroGalleryVisible=entries[0].isIntersecting;scheduleHeroGallery();}).observe(showcase);
 loadWorks();
 const hero = $('.hero');
 hero.addEventListener('pointermove',event=> {
