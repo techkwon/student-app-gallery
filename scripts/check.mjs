@@ -14,3 +14,7 @@ assert.equal(selections.classes.length,9);
 const bad=structuredClone(selections);bad.overall[1].rankLabel='2위';assert.throws(()=>validateSelections(bad,data));
 assert.throws(()=>validateWorks([{...data[0],score:99}]));
 console.log('Selection checks passed: exact shared ranks, nine classes, score fields rejected.');
+
+assert.equal(data.filter(w=>w.image&&w.imageReviewed).length,24);
+for(const work of data){if(work.image){assert((await stat(`docs/${work.image}`)).size>0);assert((await stat(`docs/${work.thumbnail}`)).size>0);}}
+console.log('24 reviewed screenshot pairs and 27 problem/solution descriptions verified.');

@@ -8,7 +8,7 @@ await rm('docs',{recursive:true,force:true}); await mkdir('docs',{recursive:true
 let html=(await readFile('site/index.html','utf8')).replaceAll('__SITE_URL__',url);
 const escape = text => text.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('\"','&quot;');
 html=html.replace('<!--SELECTIONS-->',renderSelections(selectionData(works),works,escape));
-const fallback = '<noscript><style>.gallery-tools,#result-status,#empty{display:none!important}</style><div class="static-works">'+[...works].sort((a,b)=>a.category.localeCompare(b.category,'ko')||a.title.localeCompare(b.title,'ko')).map(w=>`<article><p>${escape(w.category)}</p><h3>${escape(w.title)}</h3><p>${escape(w.description)}</p><p>${escape(w.notice)}</p></article>`).join('')+'</div></noscript>';
+const fallback = '<noscript><style>.gallery-tools,#result-status,#empty{display:none!important}</style><div class="static-works">'+[...works].sort((a,b)=>a.category.localeCompare(b.category,'ko')||a.title.localeCompare(b.title,'ko')).map(w=>`<article><p>${escape(w.category)}</p><h3>${escape(w.title)}</h3>${w.image?`<img src="${escape(w.thumbnail||w.image)}" alt="${escape(w.imageAlt)}" width="640" height="400" loading="lazy" style="width:100%;height:auto">`:"<p>스크린샷 미공개</p>"}<p>문제: ${escape(w.problem)}</p><p>해결: ${escape(w.solution)}</p><p>${escape(w.notice)}</p></article>`).join('')+'</div></noscript>';
 html=html.replace('</noscript></section>', '</noscript>'+fallback+'</section>');
 await writeFile('docs/index.html',html);
 await writeFile('docs/sitemap.xml',`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${url}</loc></url></urlset>`);

@@ -1,6 +1,6 @@
 const {chromium}=await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
 import http from 'node:http';
-import {readFile,mkdir} from 'node:fs/promises';
+import {readFile,mkdir,writeFile,rename} from 'node:fs/promises';
 import path from 'node:path';
 const server=http.createServer(async(req,res)=>{
  let pathname=decodeURIComponent(new URL(req.url,'http://localhost').pathname);
@@ -21,23 +21,24 @@ for(const width of [360,390,768,1440]){
  const page=await context.newPage();if(width===360){const session=await context.newCDPSession(page);await session.send('Emulation.setCPUThrottlingRate',{rate:6});}page.on('pageerror',e=>errors.push(e.message));
  await page.goto(base);await page.waitForSelector('.work-card');
  assert.equal(await page.locator('.work-card').count(),27);
- assert.equal(await page.locator('.hero-tile').count(),6);
- assert.equal(await page.locator('.hero-tile:visible').count(),width<600?4:6);
- const heroTile=page.locator('.hero-tile').first();await heroTile.focus();
- assert(await page.locator('.hero-showcase').evaluate(el=>el.classList.contains('is-paused')));
- const heroTitle=await heroTile.locator('strong').innerText();await page.keyboard.press('Enter');assert.equal(await page.locator('#dialog-title').innerText(),heroTitle);
+ await page.waitForSelector('.main-screen img');
+ assert.equal(await page.locator('.orbit-preview img').count(),3);
+ assert.equal(await page.locator('#works .has-screenshot img').count(),24);
+ assert.equal(await page.locator('#works .no-screenshot').count(),3);
+ const mainScreen=page.locator('.main-screen');await mainScreen.focus();
+ assert(await page.locator('.hero-showcase').evaluate(el=>el.classList.contains('rotation-paused')));
+ const heroTitle=await page.locator('.spotlight-story h2').innerText();await page.keyboard.press('Enter');assert.equal(await page.locator('#dialog-title').innerText(),heroTitle);
+ assert((await page.locator('#dialog-content').innerText()).includes('어떤 문제인가요?'));
  await page.keyboard.press('Escape');await page.waitForFunction(()=>document.body.style.position==='');
- await page.locator('#motion').click();assert.equal(await page.locator('.hero-tile').first().evaluate(el=>getComputedStyle(el).animationName),'none');
+ await page.locator('#motion').click();assert.equal(await page.locator('.main-frame').evaluate(el=>getComputedStyle(el).animationName),'none');
  await page.locator('#motion').click();
- if(width===390){
-   const initial=await page.locator('.hero-tile').evaluateAll(tiles=>tiles.map(tile=>tile.dataset.workId).join(','));
-   await page.waitForFunction(before=>[...document.querySelectorAll('.hero-tile')].map(tile=>tile.dataset.workId).join(',')!==before,initial,{timeout:7000});
-   await page.locator('#motion').click();
-   const stopped=await page.locator('.hero-tile').evaluateAll(tiles=>tiles.map(tile=>tile.dataset.workId).join(','));
-   await page.waitForTimeout(3800);
-   assert.equal(await page.locator('.hero-tile').evaluateAll(tiles=>tiles.map(tile=>tile.dataset.workId).join(',')),stopped);
-   await page.locator('#motion').click();
- }
+ const previous=await page.locator('.hero-showcase').getAttribute('data-active-id');
+ await page.locator('.showcase-next').click();
+ await page.waitForFunction(before=>document.querySelector('.hero-showcase').dataset.activeId!==before,previous);
+ await page.locator('.showcase-pause').click();assert(await page.locator('html').evaluate(el=>el.classList.contains('motion-off')));
+ const stopped=await page.locator('.hero-showcase').getAttribute('data-active-id');
+ if(width===390){await page.waitForTimeout(9000);assert.equal(await page.locator('.hero-showcase').getAttribute('data-active-id'),stopped);}
+ await page.locator('.showcase-pause').click();
  assert.equal(await page.locator('.top-selections > li').count(),10);
  assert.deepEqual(await page.locator('.top-selections > li').evaluateAll(items=>items.map(item=>Number(item.getAttribute('value')))),[1,2,2,4,5,6,7,8,9,9]);
  assert.equal(await page.locator('.top-selections .tie-label').count(),4);
@@ -67,7 +68,7 @@ for(const width of [360,390,768,1440]){
  await page.locator('#search').fill('없는검색어');assert(await page.locator('#empty').isVisible());
  await page.locator('#search').fill('');await page.locator('[data-category="all"]').click();assert.equal(await page.locator('.work-card').count(),27);
  await page.emulateMedia({reducedMotion:'reduce'});await page.waitForFunction(()=>document.documentElement.classList.contains('motion-off'));assert(await page.locator('html').evaluate(el=>el.classList.contains('motion-off')));
- assert.equal(await page.locator('.hero-image').evaluate(el=>getComputedStyle(el).animationName),'none');
+ assert.equal(await page.locator('.hero-image').evaluate(el=>getComputedStyle(el).animationName),'none');assert.equal(await page.locator('.main-frame').evaluate(el=>getComputedStyle(el).animationName),'none');
  await page.locator('#gallery').scrollIntoViewIfNeeded();await page.waitForTimeout(1000);await page.screenshot({path:`test-results/gallery-collection-${width}.png`});
  report.push({width,works:27,heroGallery:true,sharedRanks:true,classSelections:true,filterSearch:true,modalKeyboard:true,scrollFocusRestore:true,reducedMotion:true,overflow:false});
  await context.close();
@@ -77,4 +78,18 @@ const context=await browser.newContext({javaScriptEnabled:false});
 const page=await context.newPage();await page.goto(base);assert.equal(await page.locator('.static-works article').count(),27);assert.equal(await page.locator('.top-selections > li').count(),10);assert.equal(await page.locator('.class-group').count(),9);
 const missing=await page.goto(base+'missing/nested-page');assert.equal(missing.status(),404);assert.equal(await page.locator('a').getAttribute('href'),'https://techkwon.github.io/student-app-gallery/');
 await context.close();
-console.log(JSON.stringify({viewports:report,basePath:true,custom404:true,noJsContent:true,consoleErrors:errors},null,2));await browser.close();server.close();
+const motionContext=await browser.newContext({viewport:{width:1440,height:900},recordVideo:{dir:'test-results/motion',size:{width:1440,height:900}}});
+const motionPage=await motionContext.newPage();await motionPage.goto(base);await motionPage.waitForSelector('.main-screen img');await motionPage.waitForTimeout(1300);
+const frames=[];
+for(let i=0;i<5;i++){
+ await motionPage.mouse.move(140+i*240,115,{steps:15});
+ if(i)await motionPage.waitForTimeout(3000);
+ frames.push(await motionPage.evaluate(()=>({id:document.querySelector('.hero-showcase').dataset.activeId,transform:getComputedStyle(document.querySelector('.main-frame')).transform,scene:getComputedStyle(document.querySelector('.showcase-stage')).transform,problem:document.querySelector('.spotlight-problem').textContent})));
+ await motionPage.screenshot({path:`test-results/motion-frame-${i}.png`});
+}
+assert(new Set(frames.map(frame=>frame.id)).size>1,'Automatic screenshot and description change');
+assert(new Set(frames.map(frame=>frame.transform)).size>1,'Independent frame motion');
+assert(new Set(frames.map(frame=>frame.scene)).size>1,'Pointer parallax');
+const video=motionPage.video();await motionContext.close();await rename(await video.path(),'test-results/motion-proof.webm');
+await writeFile('test-results/motion-report.json',JSON.stringify(frames,null,2));
+console.log(JSON.stringify({viewports:report,actualScreenshots:24,unavailableImages:3,motionVideo:'test-results/motion-proof.webm',motionFrames:frames.length,basePath:true,custom404:true,noJsContent:true,consoleErrors:errors},null,2));await browser.close();server.close();

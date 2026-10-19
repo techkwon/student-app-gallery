@@ -71,7 +71,7 @@ document.querySelectorAll('[data-open-about]').forEach(button => button.addEvent
     element('h3','학생의 이름 대신 작품의 생각'),
     element('p','반별 우수작에는 반만 표시하며, 학생 이름·학번·번호·계정·사진은 공개하지 않습니다. 작품 제목과 설명도 익명으로 정리했습니다. 앱 내부의 식별정보까지 확인한 링크만 제공합니다.'),
     element('h3','체험 전에 알아 두세요'),
-    element('p','교육 과정에서 만든 프로토타입입니다. 각 작품의 제한 안내를 확인해 주세요. 체험 링크가 없는 작품은 소개만 제공하며, 기능이 작동한다고 보장하지 않습니다. 그래픽은 별도 표시가 없는 한 실제 앱 화면이 아닌 아이디어 일러스트입니다.')
+    element('p','교육 과정에서 만든 프로토타입입니다. 각 작품의 제한 안내를 확인해 주세요. 체험 링크가 없는 작품은 소개만 제공하며, 기능이 작동한다고 보장하지 않습니다. 실제 앱 초기 화면을 캡처한 이미지를 표시합니다. 화면을 확보하지 못한 작품은 이미지 미공개로 안내합니다. 배경 그래픽은 전시를 위한 생성 이미지입니다.')
   ], button);
 }));
 document.addEventListener('click', event => {
@@ -88,7 +88,7 @@ $('#class-filter')?.addEventListener('change', event => {
 const symbols = {'생활 접근성':'⌘','이동과 안전':'↗','환경과 자원':'♧','우리 동네':'⌂','소통과 안내':'✳'};
 function showWork(work, trigger) {
   const title = element('h2', work.title); title.id = 'dialog-title';
-  const nodes = [element('p',work.category,'eyebrow'),title,element('p',work.description),element('h3','체험 안내'),element('p',work.notice)];
+  const nodes = [element('p',work.category,'eyebrow'),title,element('h3','어떤 문제인가요?'),element('p',work.problem),element('h3','이렇게 해결해요'),element('p',work.solution),element('h3','체험 안내'),element('p',work.notice)];
   const selection = `${work.overallRankLabel ? `전체 ${work.overallRankLabel} · ` : ''}${work.classLabel} ${work.classRank}위`;
   nodes.splice(2,0,element('p',`${selection} — 수행평가 성적이 아닌 작품 전시 선정 순위입니다.`,'assessment-note'));
   if (work.image) { const img=element('img'); img.src=work.image; img.alt=work.imageAlt || `${work.title} 아이디어 일러스트`; img.width=800; img.height=600; nodes.splice(2,0,img); }
@@ -104,11 +104,12 @@ function render() {
   for (const work of filtered) {
     const card=element('button',null,'work-card'); card.type='button'; card.setAttribute('aria-label',`${work.title} 자세히 보기`);
     const visual=element('div',null,`work-visual theme-${Object.keys(symbols).indexOf(work.category)}`);
-    if (work.image) { const img=element('img'); img.src=work.image; img.alt=work.imageAlt || `${work.title} 아이디어 일러스트`; img.loading='lazy'; img.decoding='async'; img.width=800; img.height=600; visual.append(img); }
-    else { const symbol=element('span',symbols[work.category] || '✳','work-symbol'); symbol.setAttribute('aria-hidden','true'); visual.append(symbol); }
-    const caption=element('span','아이디어 일러스트','visual-caption');
+    if (work.image) { const img=element('img'); img.src=work.thumbnail||work.image; img.alt=work.imageAlt || `${work.title} 실제 앱 화면`; img.loading='lazy'; img.decoding='async'; img.width=800; img.height=600; visual.append(img); }
+    else { const symbol=element('span','스크린샷 미공개','no-screenshot'); symbol.setAttribute('aria-hidden','true'); visual.append(symbol); }
+    visual.classList.toggle('has-screenshot',Boolean(work.image));
+    const caption=element('span',work.image?'실제 앱 초기 화면':'이미지 미공개','visual-caption');
     const arrow=element('span','↗','card-arrow'); arrow.setAttribute('aria-hidden','true'); visual.append(caption,arrow);
-    card.append(visual,element('p',work.category,'work-category'),element('h3',work.title),element('p',work.description));
+    card.append(visual,element('p',work.category,'work-category'),element('h3',work.title),element('p',work.problem,'card-problem'),element('p',work.solution,'card-solution'));
     card.addEventListener('click',()=>showWork(work,card));
     card.addEventListener('pointermove',event=> {
       if(paused || event.pointerType!=='mouse') return;
@@ -148,48 +149,76 @@ $('#filters').addEventListener('click',event=> {
   $('#filters').querySelectorAll('button').forEach(el=> {el.classList.toggle('active',el===button);el.setAttribute('aria-pressed',String(el===button));}); render();
 });
 $('#search').addEventListener('input', render);
-let heroTimer=0, heroSwapTimer=0, heroTransition=null, heroGalleryVisible=true, heroHovered=false;
+let heroTimer=0, heroGalleryVisible=true, heroHovered=false, heroIndex=0, heroPool=[], heroBusy=false;
 const showcase=$('.hero-showcase');
 const shuffled = values => {
   const result=[...values];
   for(let i=result.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[result[i],result[j]]=[result[j],result[i]];}
   return result;
 };
-function fillHeroTile(tile, work){
-  tile.dataset.workId=work.id;
-  tile.setAttribute('aria-label',`${work.title} 자세히 보기`);
-  const symbol=element('span',symbols[work.category] || '✳','hero-tile-symbol');symbol.setAttribute('aria-hidden','true');
-  tile.replaceChildren(element('span',work.category,'hero-tile-category'),symbol,element('strong',work.title),element('span','개념 일러스트 · 작품 보기 ↗','hero-tile-caption'));
+function screenshotImage(work, thumbnail=false){
+  const img=element('img');img.src=thumbnail?(work.thumbnail||work.image):work.image;
+  img.alt=`${work.title} — 실제 앱 초기 화면`;img.width=1280;img.height=800;img.decoding='async';
+  return img;
+}
+function updateSpotlight(animate=false){
+  const work=heroPool[heroIndex];if(!work)return;
+  const screen=$('.main-screen',showcase),story=$('.spotlight-story',showcase);
+  const old=$('.main-screen img',showcase);
+  if(animate&&!paused&&old){
+    const ghost=old.cloneNode();ghost.className='screen-outgoing';ghost.alt='';ghost.setAttribute('aria-hidden','true');$('.screen-view',showcase).append(ghost);setTimeout(()=>ghost.remove(),1100);
+  }
+  screen.dataset.workId=work.id;screen.setAttribute('aria-label',`${work.title} 실제 화면과 설명 자세히 보기`);
+  screen.replaceChildren(screenshotImage(work));
+  if(animate&&!paused){screen.classList.remove('screen-enter');void screen.offsetWidth;screen.classList.add('screen-enter');}
+  story.replaceChildren(element('p',work.category,'eyebrow'),element('h2',work.title),element('h3','어떤 문제인가요?'),element('p',work.problem,'spotlight-problem'),element('h3','이렇게 해결해요'),element('p',work.solution,'spotlight-solution'));
+  const detail=element('button','작품 자세히 보기 ↗','text-link');detail.dataset.workId=work.id;story.append(detail);
+  if(animate&&!paused){story.classList.remove('story-enter');void story.offsetWidth;story.classList.add('story-enter');}
+  $('.screen-caption',showcase).textContent=`${work.title} · 실제 앱 화면`;
+  $('.showcase-count',showcase).textContent=`${String(heroIndex+1).padStart(2,'0')} / ${heroPool.length}`;
+  showcase.dataset.activeId=work.id;
+  showcase.querySelectorAll('.orbit-preview').forEach((button,i)=>{
+    const index=(heroIndex+i+1)%heroPool.length,next=heroPool[index];button.dataset.previewIndex=index;
+    button.setAttribute('aria-label',`${next.title} 소개로 전환`);button.replaceChildren(screenshotImage(next,true),element('span',next.title));
+  });
+  const nextImage=new Image();nextImage.src=heroPool[(heroIndex+1)%heroPool.length].image;
+}
+async function advanceHero(step=1,index=null,automatic=false){
+  if(heroBusy||!heroPool.length)return;heroBusy=true;
+  const next=index===null?(heroIndex+step+heroPool.length)%heroPool.length:index;
+  const preload=new Image();preload.src=heroPool[next].image;
+  try{await preload.decode();}catch{}
+  if(automatic&&(paused||document.hidden||!heroGalleryVisible||dialog.open||heroHovered)){heroBusy=false;scheduleHeroGallery();return;}
+  heroIndex=next;updateSpotlight(true);heroBusy=false;scheduleHeroGallery();
 }
 function renderHeroGallery(){
-  showcase.replaceChildren();
-  shuffled(works).slice(0,6).forEach((work,i)=>{
-    const tile=element('button',null,`hero-tile tile-${i}`);tile.type='button';
-    fillHeroTile(tile,work);showcase.append(tile);
-  });
-  scheduleHeroGallery();
+  heroPool=shuffled(works.filter(work=>work.image&&work.imageReviewed));
+  if(!heroPool.length){showcase.append(element('p','실제 앱 화면을 준비하고 있습니다.'));return;}
+  showcase.innerHTML='<div class="spotlight-story"></div><div class="showcase-stage"><div class="scene-orbit orbit-one" aria-hidden="true"></div><div class="scene-orbit orbit-two" aria-hidden="true"></div><i class="scene-spark spark-one" aria-hidden="true">✳</i><i class="scene-spark spark-two" aria-hidden="true">✳</i><div class="main-frame"><div class="screen-chrome" aria-hidden="true"><span>● ● ●</span><span>STUDENT APP / LIVE SHOWCASE</span><span>↗</span></div><div class="screen-view"><button class="main-screen" type="button"></button></div><div class="screen-caption"></div></div><button class="orbit-preview preview-one" type="button"></button><button class="orbit-preview preview-two" type="button"></button><button class="orbit-preview preview-three" type="button"></button></div><div class="showcase-controls"><button type="button" class="showcase-prev" aria-label="이전 작품 소개">←</button><span class="showcase-count"></span><button type="button" class="showcase-next" aria-label="다음 작품 소개">→</button><button type="button" class="showcase-pause" aria-pressed="false">일시정지 Ⅱ</button><span class="showcase-mode">8.5초마다 작품 소개</span><div class="showcase-progress" aria-hidden="true"><span></span></div></div>';
+  $('.showcase-prev',showcase).addEventListener('click',()=>advanceHero(-1));
+  $('.showcase-next',showcase).addEventListener('click',()=>advanceHero(1));
+  $('.showcase-pause',showcase).addEventListener('click',()=>{manualPause=!manualPause;syncMotion();});
+  showcase.querySelectorAll('.orbit-preview').forEach(button=>button.addEventListener('click',()=>advanceHero(0,Number(button.dataset.previewIndex))));
+  $('.main-screen',showcase).addEventListener('pointerenter',event=>{if(event.pointerType==='mouse'){heroHovered=true;scheduleHeroGallery();}});
+  $('.main-screen',showcase).addEventListener('pointerleave',()=>{heroHovered=false;scheduleHeroGallery();});
+  updateSpotlight();scheduleHeroGallery();
 }
 function scheduleHeroGallery(){
   clearTimeout(heroTimer);
-  const stopped=paused||!heroGalleryVisible||document.hidden||heroHovered||showcase.contains(document.activeElement)||dialog.open;
-  showcase.classList.toggle('is-paused',stopped);
-  if(stopped){clearTimeout(heroSwapTimer);heroTransition?.cancel();heroTransition=null;}
-  if(stopped || !showcase.children.length) return;
-  heroTimer=setTimeout(()=>{
-    const tiles=[...showcase.children].filter(tile=>getComputedStyle(tile).display!=='none');
-    const present=new Set([...showcase.children].map(tile=>tile.dataset.workId));
-    const next=shuffled(works.filter(work=>!present.has(work.id)))[0];
-    const tile=tiles[Math.floor(Math.random()*tiles.length)];
-    if(next&&tile){
-      const transition=heroTransition=tile.animate([{opacity:1,filter:'blur(0px)'},{opacity:0,filter:'blur(3px)'},{opacity:1,filter:'blur(0px)'}],{duration:700});
-      heroSwapTimer=setTimeout(()=>{if(!paused&&!showcase.contains(document.activeElement)&&!heroHovered&&!dialog.open)fillHeroTile(tile,next);},330);
-      transition.onfinish=()=>tile.style.opacity='';
-    }
-    scheduleHeroGallery();
-  },3200);
+  const focusInContent=showcase.contains(document.activeElement)&&!document.activeElement.closest('.showcase-controls');
+  const rotationStopped=paused||!heroGalleryVisible||document.hidden||heroHovered||focusInContent||dialog.open;
+  const allStopped=paused||!heroGalleryVisible||document.hidden||dialog.open;
+  showcase.classList.toggle('is-paused',allStopped);
+  showcase.classList.toggle('rotation-paused',rotationStopped);
+  const button=$('.showcase-pause',showcase);
+  if(button){button.textContent=paused?'재생 ▶':'일시정지 Ⅱ';button.setAttribute('aria-pressed',String(paused));}
+  const mode=$('.showcase-mode',showcase);
+  if(mode)mode.textContent=preference.matches?'기기 모션 감소 설정 적용':paused?'움직임 정지':focusInContent||heroHovered?'살펴보는 동안 순환 정지':'8.5초마다 작품 소개';
+  if(paused)showcase.querySelectorAll('.screen-outgoing').forEach(el=>el.remove());
+  const progress=$('.showcase-progress span',showcase);if(progress){progress.style.animation='none';void progress.offsetWidth;progress.style.animation='';}
+  if(rotationStopped||!heroPool.length)return;
+  heroTimer=setTimeout(()=>advanceHero(1,null,true),8500);
 }
-showcase.addEventListener('pointerenter',event=>{if(event.pointerType==='mouse'){heroHovered=true;scheduleHeroGallery();}});
-showcase.addEventListener('pointerleave',()=>{heroHovered=false;scheduleHeroGallery();});
 showcase.addEventListener('focusin',scheduleHeroGallery);
 showcase.addEventListener('focusout',()=>requestAnimationFrame(scheduleHeroGallery));
 dialog.addEventListener('close',scheduleHeroGallery);
@@ -199,7 +228,10 @@ loadWorks();
 const hero = $('.hero');
 hero.addEventListener('pointermove',event=> {
   if(paused || event.pointerType!=='mouse') return;
-  $('.hero-art').style.setProperty('--px',`${(event.clientX/innerWidth-.5)*22}px`);
+  const rect=hero.getBoundingClientRect();const x=(event.clientX-rect.left)/rect.width-.5,y=(event.clientY-rect.top)/rect.height-.5;
+  hero.style.setProperty('--light-x',`${(x+.5)*100}%`);hero.style.setProperty('--light-y',`${(y+.5)*100}%`);
+  hero.style.setProperty('--scene-x',`${x*38}px`);hero.style.setProperty('--scene-y',`${y*28}px`);hero.style.setProperty('--scene-ry',`${x*10}deg`);hero.style.setProperty('--scene-rx',`${-y*6}deg`);
+  $('.hero-art').style.setProperty('--px',`${x*30}px`);
   $('.hero-art').style.setProperty('--py',`${(event.clientY/innerHeight-.5)*18}px`);
 });
 let scrollQueued=false;
@@ -212,7 +244,7 @@ let frame=0, lastTime=0, visible=true, points=[], w=0,h=0;
 function resizeCanvas(){
   const rect=hero.getBoundingClientRect(); w=rect.width;h=rect.height;
   const dpr=Math.min(devicePixelRatio||1,1.5); canvas.width=w*dpr;canvas.height=h*dpr;ctx?.setTransform(dpr,0,0,dpr,0,0);
-  points=Array.from({length:innerWidth<600?16:32},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.3+.4,s:Math.random()*.15+.05}));
+  points=Array.from({length:innerWidth<600?22:48},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.3+.4,s:Math.random()*.45+.15}));
   drawParticles();
 }
 function drawParticles(){ if(!ctx)return;ctx.clearRect(0,0,w,h);ctx.fillStyle='#a8ead8';for(const p of points){ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();}}

@@ -10,7 +10,13 @@
     "classLabel": "2반",
     "classRank": 1,
     "overallRank": 1,
-    "overallRankLabel": "1위"
+    "overallRankLabel": "1위",
+    "problem": "메뉴가 많으면 원하는 음식을 찾고 총금액을 계산하기 어려워요.",
+    "solution": "메뉴 검색과 선택한 음식의 합계 표시로 주문 과정을 화면에서 연습해요.",
+    "image": "./assets/project-01.webp",
+    "thumbnail": "./assets/project-01-thumb.webp",
+    "imageAlt": "메뉴 탐색 도우미 실제 앱 초기 화면",
+    "imageReviewed": true
   },
   {
     "id": "project-02",
@@ -23,7 +29,13 @@
     "classLabel": "7반",
     "classRank": 1,
     "overallRank": 2,
-    "overallRankLabel": "공동 2위"
+    "overallRankLabel": "공동 2위",
+    "problem": "여러 명이 함께 탈 버스를 고를 때 도착 시각과 빈자리를 함께 비교하기 어려워요.",
+    "solution": "가상 시간표와 혼잡도를 이용해 출발 시각·인원에 맞는 버스를 비교해요.",
+    "image": "./assets/project-02.webp",
+    "thumbnail": "./assets/project-02-thumb.webp",
+    "imageAlt": "버스 탑승 도우미 실제 앱 초기 화면",
+    "imageReviewed": true
   },
   {
     "id": "project-03",
@@ -36,7 +48,13 @@
     "classLabel": "8반",
     "classRank": 1,
     "overallRank": 2,
-    "overallRankLabel": "공동 2위"
+    "overallRankLabel": "공동 2위",
+    "problem": "걷는 속도가 다르면 같은 거리도 건너는 데 필요한 시간이 달라져요.",
+    "solution": "거리·속도·남은 신호 시간을 넣어 추가로 필요한 시간을 계산해요.",
+    "image": "./assets/project-03.webp",
+    "thumbnail": "./assets/project-03-thumb.webp",
+    "imageAlt": "초록불 연장 시간 계산기 실제 앱 초기 화면",
+    "imageReviewed": true
   },
   {
     "id": "project-04",
@@ -49,7 +67,13 @@
     "classLabel": "7반",
     "classRank": 2,
     "overallRank": 4,
-    "overallRankLabel": "4위"
+    "overallRankLabel": "4위",
+    "problem": "쓰레기를 어느 수거함에 넣어야 하는지 헷갈릴 때가 있어요.",
+    "solution": "품목을 골라 화면 속 수거함에 넣으며 분리배출 방법을 익혀요.",
+    "image": "./assets/project-04.webp",
+    "thumbnail": "./assets/project-04-thumb.webp",
+    "imageAlt": "분리수거 도우미 실제 앱 초기 화면",
+    "imageReviewed": true
   },
   {
     "id": "project-05",
@@ -62,7 +86,13 @@
     "classLabel": "4반",
     "classRank": 1,
     "overallRank": 5,
-    "overallRankLabel": "5위"
+    "overallRankLabel": "5위",
+    "problem": "키오스크가 낯설면 주문부터 결제까지의 순서를 따라가기 어려워요.",
+    "solution": "메뉴 선택과 수량 조절, 모의 결제까지 차근차근 연습해요.",
+    "image": "./assets/project-05.webp",
+    "thumbnail": "./assets/project-05-thumb.webp",
+    "imageAlt": "키오스크 연습 도우미 실제 앱 초기 화면",
+    "imageReviewed": true
   },
   {
     "id": "project-06",
@@ -75,7 +105,13 @@
     "classLabel": "1반",
     "classRank": 1,
     "overallRank": 6,
-    "overallRankLabel": "6위"
+    "overallRankLabel": "6위",
+    "problem": "정류장마다 승객이 바뀔 때 버스가 얼마나 붐비는지 상상하기 어려워요.",
+    "solution": "가상 승객 수를 바꾸며 혼잡도와 탑승하지 못한 인원이 어떻게 달라지는지 살펴봐요.",
+    "image": "./assets/project-06.webp",
+    "thumbnail": "./assets/project-06-thumb.webp",
+    "imageAlt": "버스 혼잡도 시뮬레이터 실제 앱 초기 화면",
+    "imageReviewed": true
   },
   {
     "id": "project-07",
@@ -88,7 +124,13 @@
     "classLabel": "8반",
     "classRank": 2,
     "overallRank": 7,
-    "overallRankLabel": "7위"
+    "overallRankLabel": "7위",
+    "problem": "무인 주문 화면에서는 고른 메뉴와 수량이 맞는지 확인하기 어려울 수 있어요.",
+    "solution": "음료와 간식을 고르고 주문 내용을 다시 확인하는 모의 체험을 제공해요.",
+    "image": "./assets/project-07.webp",
+    "thumbnail": "./assets/project-07-thumb.webp",
+    "imageAlt": "키오스크 주문 도우미 실제 앱 초기 화면",
+    "imageReviewed": true
   },
   {
     "id": "project-08",
@@ -101,7 +143,13 @@
     "classLabel": "1반",
     "classRank": 2,
     "overallRank": 8,
-    "overallRankLabel": "8위"
+    "overallRankLabel": "8위",
+    "problem": "추운 날에는 어디가 얼기 쉬울지 미리 생각하기 어려워요.",
+    "solution": "장소 주변의 기상 정보를 바탕으로 결빙 위험을 살펴보되 실제 도로 감지는 하지 않아요.",
+    "image": "./assets/project-08.webp",
+    "thumbnail": "./assets/project-08-thumb.webp",
+    "imageAlt": "빙판 위험 알리미 실제 앱 초기 화면",
+    "imageReviewed": true
   },
   {
     "id": "project-09",
@@ -114,20 +162,32 @@
     "classLabel": "1반",
     "classRank": 3,
     "overallRank": 9,
-    "overallRankLabel": "공동 9위"
+    "overallRankLabel": "공동 9위",
+    "problem": "재활용 품목마다 분류와 씻는 방법이 달라 헷갈려요.",
+    "solution": "물건 이름으로 배출 방법을 검색하고 모르는 품목은 다른 확인 경로를 안내해요.",
+    "image": "./assets/project-09.webp",
+    "thumbnail": "./assets/project-09-thumb.webp",
+    "imageAlt": "재활용 가이드 실제 앱 초기 화면",
+    "imageReviewed": true
   },
   {
     "id": "project-10",
     "title": "키오스크 사용법 안내",
     "category": "생활 접근성",
-    "description": "음식을 담고 수량을 바꾸며 주문 내역과 금액이 함께 변하는 과정을 익힙니다.",
+    "description": "키오스크 주문 절차를 다섯 단계의 사용법 안내로 살펴보며 화면 사용 순서를 익힙니다.",
     "notice": "주문 연습용입니다. 외부 저장과 직원 호출은 검증하지 않았습니다.",
     "liveUrl": "https://howon.my.canva.site/cmx5cfh0wf6pppf6",
     "linkReviewed": true,
     "classLabel": "8반",
     "classRank": 3,
     "overallRank": 9,
-    "overallRankLabel": "공동 9위"
+    "overallRankLabel": "공동 9위",
+    "problem": "키오스크의 여러 버튼을 어떤 순서로 눌러야 하는지 낯설어요.",
+    "solution": "주문 절차를 단계별 안내로 살펴보며 화면 사용 순서를 익혀요.",
+    "image": "./assets/project-10.webp",
+    "thumbnail": "./assets/project-10-thumb.webp",
+    "imageAlt": "키오스크 사용법 안내 실제 앱 초기 화면",
+    "imageReviewed": true
   },
   {
     "id": "project-11",
@@ -140,7 +200,13 @@
     "classLabel": "2반",
     "classRank": 2,
     "overallRank": null,
-    "overallRankLabel": null
+    "overallRankLabel": null,
+    "problem": "카페 주문은 음료뿐 아니라 옵션도 골라야 해서 복잡하게 느껴질 수 있어요.",
+    "solution": "음료 옵션 선택과 장바구니 담기를 실제 거래 없이 연습해요.",
+    "image": "./assets/project-11.webp",
+    "thumbnail": "./assets/project-11-thumb.webp",
+    "imageAlt": "카페 키오스크 체험하기 실제 앱 초기 화면",
+    "imageReviewed": true
   },
   {
     "id": "project-12",
@@ -153,7 +219,13 @@
     "classLabel": "2반",
     "classRank": 3,
     "overallRank": null,
-    "overallRankLabel": null
+    "overallRankLabel": null,
+    "problem": "청소년이 이용할 시설의 종류와 위치를 한눈에 찾기 어려워요.",
+    "solution": "등록된 시설을 검색하고 소개와 위치를 함께 살펴봐요.",
+    "image": "./assets/project-12.webp",
+    "thumbnail": "./assets/project-12-thumb.webp",
+    "imageAlt": "청소년 시설 찾기 실제 앱 초기 화면",
+    "imageReviewed": true
   },
   {
     "id": "project-13",
@@ -165,7 +237,9 @@
     "classLabel": "3반",
     "classRank": 1,
     "overallRank": null,
-    "overallRankLabel": null
+    "overallRankLabel": null,
+    "problem": "낯선 음식 이름과 작은 글씨는 햄버거 메뉴를 고르기 어렵게 만들어요.",
+    "solution": "큰 글씨와 쉬운 메뉴 표현을 선택하고 고른 음식의 수량과 합계를 확인해요."
   },
   {
     "id": "project-14",
@@ -178,7 +252,13 @@
     "classLabel": "3반",
     "classRank": 2,
     "overallRank": null,
-    "overallRankLabel": null
+    "overallRankLabel": null,
+    "problem": "외국어로 주문하거나 대화할 때 어떤 표현을 써야 할지 막막해요.",
+    "solution": "내장된 문장과 규칙을 이용해 일상 상황의 번역과 회화 표현을 연습해요.",
+    "image": "./assets/project-14.webp",
+    "thumbnail": "./assets/project-14-thumb.webp",
+    "imageAlt": "LingoChat 번역 & 회화 실제 앱 초기 화면",
+    "imageReviewed": true
   },
   {
     "id": "project-15",
@@ -191,7 +271,13 @@
     "classLabel": "3반",
     "classRank": 3,
     "overallRank": null,
-    "overallRankLabel": null
+    "overallRankLabel": null,
+    "problem": "여러 횡단보도의 신호 시간을 기억해서 비교하기 어려워요.",
+    "solution": "관찰한 신호 시간을 입력해 화면에서 기록하고 비교해요.",
+    "image": "./assets/project-15.webp",
+    "thumbnail": "./assets/project-15-thumb.webp",
+    "imageAlt": "횡단보도 신호 기록 실제 앱 초기 화면",
+    "imageReviewed": true
   },
   {
     "id": "project-16",
@@ -204,7 +290,13 @@
     "classLabel": "4반",
     "classRank": 2,
     "overallRank": null,
-    "overallRankLabel": null
+    "overallRankLabel": null,
+    "problem": "교통카드 충전 기계가 낯설면 어떤 버튼을 눌러야 할지 망설이게 돼요.",
+    "solution": "도움 안내를 따라 실제 충전 없이 키오스크 사용 단계를 연습해요.",
+    "image": "./assets/project-16.webp",
+    "thumbnail": "./assets/project-16-thumb.webp",
+    "imageAlt": "교통카드 키오스크 연습 실제 앱 초기 화면",
+    "imageReviewed": true
   },
   {
     "id": "project-17",
@@ -217,7 +309,13 @@
     "classLabel": "4반",
     "classRank": 3,
     "overallRank": null,
-    "overallRankLabel": null
+    "overallRankLabel": null,
+    "problem": "키오스크 주문 순서를 처음부터 끝까지 익힐 기회가 부족할 수 있어요.",
+    "solution": "메뉴 선택부터 완료 화면까지 짧은 모의 주문을 반복해 봐요.",
+    "image": "./assets/project-17.webp",
+    "thumbnail": "./assets/project-17-thumb.webp",
+    "imageAlt": "키오스크 주문 연습 실제 앱 초기 화면",
+    "imageReviewed": true
   },
   {
     "id": "project-18",
@@ -230,7 +328,13 @@
     "classLabel": "5반",
     "classRank": 1,
     "overallRank": null,
-    "overallRankLabel": null
+    "overallRankLabel": null,
+    "problem": "작은 글씨의 안내 문구는 읽기 어려울 수 있어요.",
+    "solution": "직접 넣은 안내 문구를 크게 보여 주어 읽기 편한 화면을 만들어 봐요.",
+    "image": "./assets/project-18.webp",
+    "thumbnail": "./assets/project-18-thumb.webp",
+    "imageAlt": "어르신 화면 도우미 실제 앱 초기 화면",
+    "imageReviewed": true
   },
   {
     "id": "project-19",
@@ -243,7 +347,13 @@
     "classLabel": "5반",
     "classRank": 2,
     "overallRank": null,
-    "overallRankLabel": null
+    "overallRankLabel": null,
+    "problem": "물건을 버리는 방법과 가져갈 수거 장소를 따로 찾아야 할 때가 있어요.",
+    "solution": "품목별 배출 안내와 등록된 수거 지점을 함께 살펴봐요.",
+    "image": "./assets/project-19.webp",
+    "thumbnail": "./assets/project-19-thumb.webp",
+    "imageAlt": "분리수거 안내기 실제 앱 초기 화면",
+    "imageReviewed": true
   },
   {
     "id": "project-20",
@@ -256,7 +366,13 @@
     "classLabel": "5반",
     "classRank": 3,
     "overallRank": null,
-    "overallRankLabel": null
+    "overallRankLabel": null,
+    "problem": "어떤 이동 수단을 선택할지 거리와 예상 시간을 비교하기 어려워요.",
+    "solution": "출발지와 도착지를 넣어 이동 수단별 거리와 예상 시간을 비교해요.",
+    "image": "./assets/project-20.webp",
+    "thumbnail": "./assets/project-20-thumb.webp",
+    "imageAlt": "최적 경로 안내 실제 앱 초기 화면",
+    "imageReviewed": true
   },
   {
     "id": "project-21",
@@ -268,7 +384,9 @@
     "classLabel": "6반",
     "classRank": 1,
     "overallRank": null,
-    "overallRankLabel": null
+    "overallRankLabel": null,
+    "problem": "정해진 시간 안에 갈 수 있는 주변 장소를 찾기 어려워요.",
+    "solution": "출발지와 이동 가능한 시간을 기준으로 등록된 장소를 찾아봐요."
   },
   {
     "id": "project-22",
@@ -280,7 +398,9 @@
     "classLabel": "6반",
     "classRank": 2,
     "overallRank": null,
-    "overallRankLabel": null
+    "overallRankLabel": null,
+    "problem": "키오스크에서 원하는 메뉴가 어느 버튼 안에 있는지 헷갈려요.",
+    "solution": "메뉴 이름을 입력하면 그 메뉴까지 누를 버튼 순서를 안내해요."
   },
   {
     "id": "project-23",
@@ -293,7 +413,13 @@
     "classLabel": "6반",
     "classRank": 3,
     "overallRank": null,
-    "overallRankLabel": null
+    "overallRankLabel": null,
+    "problem": "두 장소 사이의 여러 경로가 얼마나 다른지 한눈에 비교하기 어려워요.",
+    "solution": "지도에서 경로와 거리를 비교하되 자동차 도로 결과를 실제 도보 통학 안내로 쓰지는 않아요.",
+    "image": "./assets/project-23.webp",
+    "thumbnail": "./assets/project-23-thumb.webp",
+    "imageAlt": "등하교 경로 탐색 실제 앱 초기 화면",
+    "imageReviewed": true
   },
   {
     "id": "project-24",
@@ -306,7 +432,13 @@
     "classLabel": "7반",
     "classRank": 3,
     "overallRank": null,
-    "overallRankLabel": null
+    "overallRankLabel": null,
+    "problem": "자주 버리는 물건도 수거함과 주의사항이 헷갈릴 수 있어요.",
+    "solution": "품목을 선택하면 분류와 배출할 때 주의할 점을 함께 보여 줘요.",
+    "image": "./assets/project-24.webp",
+    "thumbnail": "./assets/project-24-thumb.webp",
+    "imageAlt": "분리배출 가이드 실제 앱 초기 화면",
+    "imageReviewed": true
   },
   {
     "id": "project-25",
@@ -319,7 +451,13 @@
     "classLabel": "9반",
     "classRank": 1,
     "overallRank": null,
-    "overallRankLabel": null
+    "overallRankLabel": null,
+    "problem": "처음 쓰는 기계는 긴 사용 설명을 한 번에 따라가기 어려워요.",
+    "solution": "준비된 안내나 직접 적은 사용 순서를 한 단계씩 나눠 보여 줘요.",
+    "image": "./assets/project-25.webp",
+    "thumbnail": "./assets/project-25-thumb.webp",
+    "imageAlt": "차근차근 사용 안내 실제 앱 초기 화면",
+    "imageReviewed": true
   },
   {
     "id": "project-26",
@@ -332,7 +470,13 @@
     "classLabel": "9반",
     "classRank": 2,
     "overallRank": null,
-    "overallRankLabel": null
+    "overallRankLabel": null,
+    "problem": "메뉴와 수량을 여러 버튼으로 입력하는 방식이 번거로울 수 있어요.",
+    "solution": "주문할 내용을 문장으로 적으면 알아들은 메뉴와 수량, 합계를 확인해요.",
+    "image": "./assets/project-26.webp",
+    "thumbnail": "./assets/project-26-thumb.webp",
+    "imageAlt": "문장으로 주문 연습 실제 앱 초기 화면",
+    "imageReviewed": true
   },
   {
     "id": "project-27",
@@ -345,6 +489,12 @@
     "classLabel": "9반",
     "classRank": 3,
     "overallRank": null,
-    "overallRankLabel": null
+    "overallRankLabel": null,
+    "problem": "도착 시간만으로는 다음 차에 탈 여유가 있는지 함께 살펴보기 어려워요.",
+    "solution": "예시 데이터로 도착 시간과 남은 정원을 함께 보여 주는 시뮬레이션을 제공해요.",
+    "image": "./assets/project-27.webp",
+    "thumbnail": "./assets/project-27-thumb.webp",
+    "imageAlt": "대중교통 도착 알리미 실제 앱 초기 화면",
+    "imageReviewed": true
   }
 ]
