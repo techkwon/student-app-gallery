@@ -1,0 +1,16 @@
+import {cp,mkdir,readFile,writeFile,rm} from 'node:fs/promises';
+import {validateWorks} from './validate.mjs';
+const url=process.env.SITE_URL || 'https://techkwon.github.io/student-app-gallery/';
+if(!/^https:\/\/[a-z\d.-]+\/[a-z\d/_-]*\/$/i.test(url)) throw new Error('SITE_URL must be an HTTPS directory URL with trailing slash');
+const works=JSON.parse(await readFile('site/works.json','utf8')); validateWorks(works);
+await rm('docs',{recursive:true,force:true}); await mkdir('docs',{recursive:true}); await cp('site','docs',{recursive:true});
+let html=(await readFile('site/index.html','utf8')).replaceAll('__SITE_URL__',url);
+const escape = text => text.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('\"','&quot;');
+const fallback = '<noscript><div class="static-works">'+[...works].sort((a,b)=>a.category.localeCompare(b.category,'ko')||a.title.localeCompare(b.title,'ko')).map(w=>`<article><p>${escape(w.category)}</p><h3>${escape(w.title)}</h3><p>${escape(w.description)}</p><p>${escape(w.notice)}</p></article>`).join('')+'</div></noscript>';
+html=html.replace('</noscript></section>', '</noscript>'+fallback+'</section>');
+await writeFile('docs/index.html',html);
+await writeFile('docs/sitemap.xml',`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${url}</loc></url></urlset>`);
+await writeFile('docs/robots.txt',`User-agent: *\nAllow: /\nSitemap: ${url}sitemap.xml\n`);
+await writeFile('docs/.nojekyll','');
+await writeFile('docs/404.html',`<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>페이지를 찾을 수 없습니다 — 작은 발견</title><style>body{background:#101310;color:#f1f1e9;font-family:system-ui;padding:15vh 8vw;line-height:1.8}a{color:#cbfa78;padding:14px 0;display:inline-block}h1{font-size:clamp(28px,6vw,64px)}</style></head><body><p>404 · 작은 발견</p><h1>이곳에는 아직 발견이 없어요.</h1><p>주소가 바뀌었거나 존재하지 않는 페이지입니다.</p><a href="${url}">전시관으로 돌아가기 ↗</a></body></html>`);
+console.log(`Built ${works.length} anonymous works for ${url}`);

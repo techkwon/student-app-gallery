@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://techkwon.github.io/student-app-gallery/sitemap.xml
